@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Tarjetas</title>
+    <!-- Bootstrap CSS (opcional pero recomendado) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; background-color: #f8f9fa; }
+        .table-container { background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { color: #343a40; margin-bottom: 20px; }
+        .numero-tarjeta { font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container table-container p-4">
+        <h2 class="text-center mb-4">📋 Listado de Tarjetas</h2>
+        
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Cliente</th>
+                    <th>Número Enmascarado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if tarjetas %}
+                    {% for tarjeta in tarjetas %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-{% if tarjeta.tipo == 'crédito' %}warning{% else %}info{% endif %}">
+                                {{ tarjeta.tipo | capitalize }}
+                            </span>
+                        </td>
+                        <td>{{ tarjeta.cliente.nombre }} {{ tarjeta.cliente.apellido }}</td>
+                        <td class="numero-tarjeta">{{ tarjeta.numero_enmascarado }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">
+                            No hay tarjetas registradas
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        
+        <!-- Botón para volver (opcional) -->
+        <a href="{{ url_for('tarjetas.formulario_tarjeta') }}" class="btn btn-primary mt-3">
+            ➕ Registrar Nueva Tarjeta
+        </a>
+    </div>
+
+    <!-- Bootstrap JS (opcional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

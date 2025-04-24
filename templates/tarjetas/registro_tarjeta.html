@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Tarjeta</title>
+    <!-- Bootstrap embebido (Fallback) -->
+    <style>
+        /* Estilos mínimos de Bootstrap */
+        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-control { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px; }
+        .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; }
+        .btn-primary { background-color: #0d6efd; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .text-center { text-align: center; }
+        .row { display: flex; flex-wrap: wrap; margin: 0 -10px; }
+        .col-md-6 { flex: 0 0 50%; padding: 0 10px; box-sizing: border-box; }
+    </style>
+    <!-- Iconos de FontAwesome embebidos (SVG) -->
+    <style>
+        .fa { display: inline-block; width: 20px; text-align: center; }
+        .fa-credit-card:before { content: "💳"; }
+        .fa-save:before { content: "💾"; }
+        .fa-times:before { content: "✖"; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2 class="text-center">💳 Registro de Tarjeta</h2>
+            
+            <!-- Formulario -->
+            <form method="POST" action="{{ url_for('tarjetas.registrar_tarjeta') }}">
+                <div class="row">
+                    <!-- Número de Tarjeta -->
+                    <div class="col-md-12">
+                        <label for="numero" class="form-label">Número de Tarjeta</label>
+                        <input type="text" class="form-control" id="numero" name="numero" 
+                               maxlength="19" placeholder="0000 0000 0000 0000" required>
+                    </div>
+                    
+                    <!-- Tipo de Tarjeta -->
+                    <div class="col-md-6">
+                        <label for="tipo" class="form-label">Tipo</label>
+                        <select class="form-control" id="tipo" name="tipo" required>
+                            <option value="" disabled selected>Seleccione...</option>
+                            <option value="Débito">Débito</option>
+                            <option value="Crédito">Crédito</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Cliente -->
+                    <div class="col-md-6">
+                        <label for="cliente_id" class="form-label">Cliente</label>
+                        <select class="form-control" id="cliente_id" name="cliente_id" required>
+                            <option value="" disabled selected>Seleccione...</option>
+                            {% for cliente in clientes %}
+                            <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellido }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="col-md-12 text-center" style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="fa fa-save"></span> Guardar
+                        </button>
+                        <a href="{{ url_for('tarjetas.lista_tarjetas') }}" class="btn btn-secondary">
+                            <span class="fa fa-times"></span> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script para formatear número -->
+    <script>
+        document.getElementById('numero').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s+/g, '');
+            if (value.length > 0) {
+                value = value.match(/.{1,4}/g).join(' ');
+                e.target.value = value;
+            }
+        });
+    </script>
+    <script>
+        document.getElementById('numero').addEventListener('input', function(e) {
+            // Formato visual con espacios (pero guarda solo dígitos)
+            let value = e.target.value.replace(/\s+/g, '');
+            if (value.length > 16) value = value.substring(0, 16);
+            e.target.value = value.match(/.{1,4}/g)?.join(' ') || '';
+            
+            // Validación en tiempo real
+            const isValid = /^\d{16}$/.test(value);
+            e.target.style.borderColor = isValid ? '#28a745' : '#dc3545';
+        });
+        </script>
+</body>
+</html>

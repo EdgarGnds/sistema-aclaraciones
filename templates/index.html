@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Aclaraciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { padding: 20px; background-color: #f8f9fa; }
+        .card { border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card-header { background-color: #4e73df; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4"><i class="fas fa-shield-alt"></i> Sistema de Aclaraciones</h1>
+        
+        <!-- Tarjetas de opciones -->
+        <div class="row">
+            <!-- Registrar Cliente -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="fas fa-user-plus"></i> Registrar Cliente</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Agregar nuevos clientes al sistema.</p>
+                        <a href="{{ url_for('clientes.registrar_cliente') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Ir al formulario
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Consultar Clientes -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="fas fa-search"></i> Consultar Clientes</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Ver y gestionar clientes registrados.</p>
+                        <a href="{{ url_for('clientes.consultar_clientes') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Ver listado
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tarjetas (opcional) -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="fas fa-credit-card"></i> Gestionar Tarjetas</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Administrar tarjetas de clientes.</p>
+                        <a href="{{ url_for('tarjetas.lista_tarjetas') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Ver tarjetas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
