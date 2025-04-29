@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from tarjetas.models import Tarjeta
+from tarjetas.models import Tarjeta, HistorialCambioEstado  # <- Importamos Historial
 from clientes.models import Cliente
 from database import db
 
@@ -42,5 +42,48 @@ def lista_tarjetas():
         db.contains_eager(Tarjeta.cliente)
     ).order_by(Cliente.nombre).all()
     
-    return render_template('tarjetas/lista_tarjetas.html', 
-                         tarjetas=tarjetas)
+    return render_template('tarjetas/lista_tarjetas.html', tarjetas=tarjetas)
+
+@tarjetas.route('/tarjetas/cambiar_estado/<int:tarjeta_id>', methods=['POST'])
+def cambiar_estado_tarjeta(tarjeta_id):
+    nuevo_estado = request.form.get('nuevo_estado')
+    tarjeta = Tarjeta.query.get_or_404(tarjeta_id)
+
+    if nuevo_estado not in ['activa', 'bloqueada', 'cancelada']:
+        flash('❌ Estado inválido', 'danger')
+        return redirect(url_for('tarjetas.lista_tarjetas'))
+
+    try:
+        # Guardar el estado ANTES de cambiarlo
+        estado_anterior = tarjeta.estado
+        
+        # Actualizar el estado
+        tarjeta.estado = nuevo_estado
+        
+        # Registrar en historial (con todos los campos requeridos)
+        historial = HistorialCambioEstado(
+            tarjeta_id=tarjeta.id,
+            estado_anterior=estado_anterior,  # <-- Ahora tiene valor
+            estado_nuevo=nuevo_estado,
+            realizado_por="admin"  # <-- Reemplazar con sistema de autenticación
+            # fecha_cambio se asigna automáticamente por el default
+        )
+        
+        db.session.add(historial)
+        db.session.commit()
+        
+        flash(f'✅ Estado actualizado a "{nuevo_estado.capitalize()}"', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'❌ Error: {str(e)}', 'danger')
+    
+    return redirect(url_for('tarjetas.lista_tarjetas'))
+
+@tarjetas.route('/tarjetas/historial')
+def historial_tarjetas():
+    historial = db.session.query(HistorialCambioEstado).join(Tarjeta).options(
+        db.contains_eager(HistorialCambioEstado.tarjeta)
+    ).order_by(HistorialCambioEstado.fecha_cambio.desc()).all()
+    
+    return render_template('tarjetas/historial.html', historial=historial)
+
